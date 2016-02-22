@@ -1,0 +1,7 @@
+https://docs.google.com/document/d/1F0Vs14oNEs2idFJR3C_OPxwS6L0HPliOii-QpbmrMo4/pub?embedded=True
+http://spartanideas.msu.edu/2014/05/20/creating-a-table-of-contents-with-internal-links-in-ipython-notebooks-and-markdown-documents/
+https://docs.mongodb.org/getting-started/python/aggregation/
+http://api.mongodb.org/python/current/examples/aggregation.html
+https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+https://www.openstreetmap.org/export#map=10/44.2250/-76.2712
+http://cartographic.info/ca_street/map.php?p=ont&id=108117
