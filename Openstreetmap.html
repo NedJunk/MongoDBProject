@@ -195,7 +195,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="1.-Problems-with-the-data">1. Problems with the data<a class="anchor-link" href="#1.-Problems-with-the-data">&#182;</a></h3><h4 id="Auditing-the-Data">Auditing the Data<a class="anchor-link" href="#Auditing-the-Data">&#182;</a></h4><p>There were many naming issues with the street types. So, as was done in the course, I set about regularizing the street type naming conventions. After iterating manually through the OSM file repeatedly I was able to capture all of the types of streets that exist in Kingston and build a mapping that caputres all of their abbreviations. They can be found in the code at the end of this document. In order to accomplish this I had to add extra logic to handle street names that ended in numbers or cardinal directions, i.e. 1, North, 37, etc. There were a handful of typos or inverted formulations that I dealt with using special rules.</p>
+<h4 id="1.-Problems-with-the-data">1. Problems with the data<a class="anchor-link" href="#1.-Problems-with-the-data">&#182;</a></h4><h4 id="Auditing-the-Data">Auditing the Data<a class="anchor-link" href="#Auditing-the-Data">&#182;</a></h4><p>There were many naming issues with the street types. So, as was done in the course, I set about regularizing the street type naming conventions. After iterating manually through the OSM file repeatedly I was able to capture all of the types of streets that exist in Kingston and build a mapping that caputres all of their abbreviations. They can be found in the code at the end of this document. In order to accomplish this I had to add extra logic to handle street names that ended in numbers or cardinal directions, i.e. 1, North, 37, etc. There were some inverted formulations (instead of Ferguson Sideroad, there was Sideroad Ferguson) that I left alone because my name cleaning function would have overwritten correct instances.</p>
+<p>I also audited the postal code data. I compiled a regular expression that fit the form of Canadian postal codes (A1B 2C3) and checked during my audit to see if there were any postal code tags that did not fit this convention. There were 4 erroneous postal codes. The larger problem that I discovered is that more than 95% of tags with house numbers did not have postal codes.</p>
 
 </div>
 </div>
@@ -211,6 +212,20 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="sd">&quot;&quot;&quot;load the db&quot;&quot;&quot;</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -222,10 +237,11 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">total_document_count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">find</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<div class=" highlight hl-ipython2"><pre><span class="sd">&quot;&quot;&quot;get the database&quot;&quot;&quot;</span>
+<span class="n">total_document_count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">find</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 <span class="n">total_document_count</span>
 </pre></div>
 
@@ -237,7 +253,7 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[3]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[5]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -261,10 +277,11 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;node&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<div class=" highlight hl-ipython2"><pre><span class="sd">&quot;&quot;&quot;count the nodes&quot;&quot;&quot;</span>
+<span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;node&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -275,7 +292,7 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[4]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[6]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -299,10 +316,11 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;way&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<div class=" highlight hl-ipython2"><pre><span class="sd">&quot;&quot;&quot;count the ways&quot;&quot;&quot;</span>
+<span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;way&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -313,7 +331,7 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[5]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[7]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -337,10 +355,11 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="nb">len</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">distinct</span><span class="p">(</span><span class="s2">&quot;created.user&quot;</span><span class="p">))</span>
+<div class=" highlight hl-ipython2"><pre><span class="sd">&quot;&quot;&quot;count the users who have made contributions&quot;&quot;&quot;</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">distinct</span><span class="p">(</span><span class="s2">&quot;created.user&quot;</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -351,7 +370,7 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[6]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[8]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -375,15 +394,15 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$created.user&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span>
-<span class="n">s</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$sort&quot;</span><span class="p">:{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}}</span>
-<span class="n">l</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$created.user&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span> <span class="c1"># group all users and count their contributions</span>
+<span class="n">s</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$sort&quot;</span><span class="p">:{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}}</span> <span class="c1"># sort from highest to lowest</span>
+<span class="n">l</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span> <span class="c1"># only show 10</span>
 
-<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">g</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span> <span class="p">]</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">g</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span> <span class="p">]</span> <span class="c1"># make the pipeline</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span> <span class="c1"># aggregate</span>
 
 <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="c1"># pymongo 3.X seems to be different from 2.X</span>
 </pre></div>
@@ -418,7 +437,7 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="s2">&quot;User andrewpmk provided {0:.2f}</span><span class="si">% o</span><span class="s2">f the document entries.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="mf">560428.</span> <span class="o">+</span> <span class="mi">44552</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="n">total_document_count</span><span class="p">)</span>
@@ -432,7 +451,7 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[8]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[10]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -466,16 +485,16 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$created.user&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span>
-<span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$created.user&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span> <span class="c1"># use the screen name as id and count entries</span>
+<span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}</span> <span class="c1"># only show the ones with a single entry</span>
 
-<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">g</span><span class="p">,</span> <span class="n">m</span> <span class="p">]</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">g</span><span class="p">,</span> <span class="n">m</span> <span class="p">]</span> <span class="c1"># make the pipeline</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span> <span class="c1"># aggregate</span>
 
-<span class="n">single_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+<span class="n">single_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="c1"># print my statement</span>
 <span class="k">print</span> <span class="s2">&quot;There were {0} users who contributed a single entry which constitutes {1:.2f}</span><span class="si">% o</span><span class="s2">f all contributors.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">single_users</span><span class="p">,</span> <span class="n">single_users</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="mi">322</span><span class="p">)</span>
 </pre></div>
 
@@ -509,18 +528,18 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;amenity&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span>
-<span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$amenity&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span>
-<span class="n">s</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$sort&quot;</span><span class="p">:{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}}</span>
-<span class="n">l</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;amenity&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span> <span class="c1"># if it is an amenity</span>
+<span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$amenity&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span> <span class="c1"># group all same amenities and count instances</span>
+<span class="n">s</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$sort&quot;</span><span class="p">:{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}}</span> <span class="c1"># list in descending order</span>
+<span class="n">l</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span> <span class="c1"># only show 10</span>
 
-<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">m</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span> <span class="p">]</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">m</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span> <span class="p">]</span> <span class="c1"># make pipeline</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span> <span class="c1"># call aggregate</span>
 
-<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="c1"># print results</span>
 </pre></div>
 
 </div>
@@ -562,17 +581,17 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">m1</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;amenity&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span>
-<span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$amenity&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span>
-<span class="n">m2</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">m1</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;amenity&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span> <span class="c1"># if it is an amenity</span>
+<span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$amenity&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span> <span class="c1"># group all same amenities and count instances</span>
+<span class="n">m2</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}</span> <span class="c1"># only match the amenities that appear only once</span>
 
-<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">m1</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">m2</span> <span class="p">]</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">m1</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">m2</span> <span class="p">]</span> <span class="c1"># make pipeline</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span> <span class="c1"># call aggregate</span>
 
-<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="c1"># print results</span>
 </pre></div>
 
 </div>
@@ -642,20 +661,30 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Most-Common-Cuisine-Types">Most Common Cuisine Types<a class="anchor-link" href="#Most-Common-Cuisine-Types">&#182;</a></h4><p>As we can see from the results below, the most common cuisine type is <code>None</code>. This suggests that we could contribute to the OSM data by tracking down these restaurants, either online or in person and finding out what kind of food they serve.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;amenity&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="s2">&quot;amenity&quot;</span><span class="p">:</span><span class="s2">&quot;restaurant&quot;</span><span class="p">}}</span>
-<span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$cuisine&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span>
-<span class="n">s</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$sort&quot;</span><span class="p">:{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}}</span>
-<span class="n">l</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;amenity&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="s2">&quot;amenity&quot;</span><span class="p">:</span><span class="s2">&quot;restaurant&quot;</span><span class="p">}}</span> <span class="c1"># if it is an amenity and it is a restaurant</span>
+<span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$cuisine&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span> <span class="c1"># group all same cuisine types and count instances</span>
+<span class="n">s</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$sort&quot;</span><span class="p">:{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}}</span> <span class="c1"># sort in descending order</span>
+<span class="n">l</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$limit&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">}</span> <span class="c1"># only show 10</span>
 
-<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">m</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span> <span class="p">]</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">m</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span> <span class="p">]</span> <span class="c1"># make the pipeline</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span> <span class="c1"># aggregate</span>
 
-<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="c1"># print the results</span>
 </pre></div>
 
 </div>
@@ -691,6 +720,274 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>As a first step in that direction, let's find the names of these restaurants.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;amenity&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="s2">&quot;amenity&quot;</span><span class="p">:</span><span class="s2">&quot;restaurant&quot;</span><span class="p">,</span> <span class="s2">&quot;cuisine&quot;</span><span class="p">:</span><span class="bp">None</span><span class="p">}}</span> <span class="c1"># if it is an amenity and it is a restaurant and it has no listed cuisine</span>
+<span class="n">g</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$group&quot;</span><span class="p">:{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span><span class="s2">&quot;$name&quot;</span><span class="p">}}</span> <span class="c1"># group them by name</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">m</span><span class="p">,</span> <span class="n">g</span> <span class="p">]</span> <span class="c1"># make the pipeline</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span> <span class="c1"># aggregate</span>
+
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="c1"># print the results</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[{u&apos;_id&apos;: u&quot;Don Cherry&apos;s Sports Grill&quot;},
+ {u&apos;_id&apos;: u&quot;Riley&apos;s by the River&quot;},
+ {u&apos;_id&apos;: u&apos;Tilted Kilt&apos;},
+ {u&apos;_id&apos;: u&apos;Athlone Inn&apos;},
+ {u&apos;_id&apos;: u&quot;J &amp; P&apos;s Family Restaurant&quot;},
+ {u&apos;_id&apos;: u&apos;Swiss Chalet&apos;},
+ {u&apos;_id&apos;: u&quot;Kelsey&apos;s&quot;},
+ {u&apos;_id&apos;: u&quot;Stollery&apos;s&quot;},
+ {u&apos;_id&apos;: u&apos;Sakura&apos;},
+ {u&apos;_id&apos;: u&quot;Chrissy&apos;s Diner&quot;},
+ {u&apos;_id&apos;: u&apos;Golden Star Restaurant&apos;},
+ {u&apos;_id&apos;: u&apos;Marble Slab Creamery&apos;},
+ {u&apos;_id&apos;: u&apos;Luce&apos;},
+ {u&apos;_id&apos;: u&apos;Star Diner&apos;},
+ {u&apos;_id&apos;: u&apos;The Loyalist Grill&apos;},
+ {u&apos;_id&apos;: u&quot;Denny&apos;s&quot;},
+ {u&apos;_id&apos;: u&apos;Classics Tea Lounge&apos;},
+ {u&apos;_id&apos;: u&quot;Windmill&apos;s&quot;},
+ {u&apos;_id&apos;: u&quot;Tommy&apos;s&quot;},
+ {u&apos;_id&apos;: u&apos;The Creekside Bar &amp; Grill&apos;},
+ {u&apos;_id&apos;: u&apos;General Wolfe Hotel &amp; Restaurant&apos;},
+ {u&apos;_id&apos;: u&apos;Husky House Restaurant&apos;},
+ {u&apos;_id&apos;: u&apos;Bob Evans Restaurant&apos;},
+ {u&apos;_id&apos;: u&apos;Milestones&apos;},
+ {u&apos;_id&apos;: u&apos;Cracker Barrel&apos;},
+ {u&apos;_id&apos;: u&apos;Division Fish &amp; Chips&apos;},
+ {u&apos;_id&apos;: u&apos;Eggsquis&apos;},
+ {u&apos;_id&apos;: u&quot;Aunt Lucy&apos;s&quot;},
+ {u&apos;_id&apos;: u&apos;The River Mill Restaurant&apos;},
+ {u&apos;_id&apos;: u&apos;Copper Penny&apos;},
+ {u&apos;_id&apos;: u&quot;Megalo&apos;s&quot;},
+ {u&apos;_id&apos;: u&apos;Wooden Heads&apos;},
+ {u&apos;_id&apos;: u&apos;Zappas Lounge&apos;},
+ {u&apos;_id&apos;: u&apos;LaSalle&apos;},
+ {u&apos;_id&apos;: u&apos;Ramekins Casual Restaurant&apos;},
+ {u&apos;_id&apos;: u&apos;Tango Nouveau&apos;},
+ {u&apos;_id&apos;: u&apos;Sizzle&apos;},
+ {u&apos;_id&apos;: u&quot;Pete&apos;s Place&quot;},
+ {u&apos;_id&apos;: u&apos;The Hoagie House&apos;},
+ {u&apos;_id&apos;: u&quot;Wong&apos;s Garden Restaurant&quot;},
+ {u&apos;_id&apos;: u&quot;Rahim&apos;s Cuisine&quot;},
+ {u&apos;_id&apos;: u&quot;Brandee&apos;s Restaurant &amp; Lounge&quot;},
+ {u&apos;_id&apos;: u&apos;HWAKI&apos;},
+ {u&apos;_id&apos;: u&quot;East Side Mario&apos;s&quot;},
+ {u&apos;_id&apos;: u&apos;Minos Village Restaurant&apos;},
+ {u&apos;_id&apos;: u&apos;Golden Rooster&apos;},
+ {u&apos;_id&apos;: u&apos;Jiffy Grill&apos;},
+ {u&apos;_id&apos;: u&apos;Aquaterra Restobistro&apos;},
+ {u&apos;_id&apos;: None},
+ {u&apos;_id&apos;: u&quot;Montana&apos;s&quot;},
+ {u&apos;_id&apos;: u&apos;Panda Garden Buffet&apos;},
+ {u&apos;_id&apos;: u&quot;Morrison&apos;s Restaurant&quot;},
+ {u&apos;_id&apos;: u&apos;The Wolfe Island Grill&apos;},
+ {u&apos;_id&apos;: u&quot;Papa&apos;s Pizzeria Restaurant&quot;},
+ {u&apos;_id&apos;: u&apos;Sushi Q&apos;},
+ {u&apos;_id&apos;: u&apos;The Grad Club&apos;},
+ {u&apos;_id&apos;: u&apos;Mekong Vietnamese Restaurant&apos;},
+ {u&apos;_id&apos;: u&apos;The Merchant Tap House&apos;},
+ {u&apos;_id&apos;: u&apos;Wolfe Island Bakery&apos;},
+ {u&apos;_id&apos;: u&apos;days on front Restaurant&apos;},
+ {u&apos;_id&apos;: u&apos;Pizza Hut&apos;},
+ {u&apos;_id&apos;: u&apos;Lone Star Grill&apos;}]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Having eaten at a number of these establishements, I feel qualified to go ahead and input the appropriate missing data. It's safe to say a script that looked for the word 'pizza' in the restaurant name could update a number of these entries.</p>
+<p>But now I want to know which restaurant doesn't even have a name entered.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;amenity&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="s2">&quot;amenity&quot;</span><span class="p">:</span><span class="s2">&quot;restaurant&quot;</span><span class="p">,</span> <span class="s2">&quot;cuisine&quot;</span><span class="p">:</span><span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="bp">None</span><span class="p">}}</span> <span class="c1"># if it is a nameless amenity and it is a restaurant and it has no listed cuisine</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">m</span> <span class="p">]</span> <span class="c1"># make the pipeline</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span> <span class="c1"># aggregate</span>
+
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="c1"># print the results</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[{u&apos;_id&apos;: ObjectId(&apos;56ca38acb1f1d1379fe9f709&apos;),
+  u&apos;amenity&apos;: u&apos;restaurant&apos;,
+  u&apos;created&apos;: {u&apos;changeset&apos;: u&apos;2137821&apos;,
+               u&apos;timestamp&apos;: u&apos;2009-08-14T01:55:51Z&apos;,
+               u&apos;uid&apos;: u&apos;1679&apos;,
+               u&apos;user&apos;: u&apos;andrewpmk&apos;,
+               u&apos;version&apos;: u&apos;1&apos;},
+  u&apos;id&apos;: u&apos;465112190&apos;,
+  u&apos;pos&apos;: [44.2302586, -76.4791536],
+  u&apos;type&apos;: u&apos;node&apos;},
+ {u&apos;_id&apos;: ObjectId(&apos;56ca38acb1f1d1379fea0114&apos;),
+  u&apos;amenity&apos;: u&apos;restaurant&apos;,
+  u&apos;created&apos;: {u&apos;changeset&apos;: u&apos;2349488&apos;,
+               u&apos;timestamp&apos;: u&apos;2009-09-02T15:37:37Z&apos;,
+               u&apos;uid&apos;: u&apos;1679&apos;,
+               u&apos;user&apos;: u&apos;andrewpmk&apos;,
+               u&apos;version&apos;: u&apos;1&apos;},
+  u&apos;id&apos;: u&apos;481008259&apos;,
+  u&apos;note&apos;: u&apos;for truck stop&apos;,
+  u&apos;pos&apos;: [44.2793916, -76.5677605],
+  u&apos;shop&apos;: u&apos;convenience&apos;,
+  u&apos;type&apos;: u&apos;node&apos;},
+ {u&apos;_id&apos;: ObjectId(&apos;56ca38bdb1f1d1379ff34d99&apos;),
+  u&apos;amenity&apos;: u&apos;restaurant&apos;,
+  u&apos;created&apos;: {u&apos;changeset&apos;: u&apos;28568770&apos;,
+               u&apos;timestamp&apos;: u&apos;2015-02-02T15:14:42Z&apos;,
+               u&apos;uid&apos;: u&apos;558778&apos;,
+               u&apos;user&apos;: u&apos;JB82&apos;,
+               u&apos;version&apos;: u&apos;1&apos;},
+  u&apos;id&apos;: u&apos;3327045027&apos;,
+  u&apos;pos&apos;: [44.338247, -75.9172508],
+  u&apos;type&apos;: u&apos;node&apos;},
+ {u&apos;_id&apos;: ObjectId(&apos;56ca38bdb1f1d1379ff3633c&apos;),
+  u&apos;amenity&apos;: u&apos;restaurant&apos;,
+  u&apos;created&apos;: {u&apos;changeset&apos;: u&apos;32705247&apos;,
+               u&apos;timestamp&apos;: u&apos;2015-07-17T19:35:24Z&apos;,
+               u&apos;uid&apos;: u&apos;1679&apos;,
+               u&apos;user&apos;: u&apos;andrewpmk&apos;,
+               u&apos;version&apos;: u&apos;1&apos;},
+  u&apos;id&apos;: u&apos;3655903577&apos;,
+  u&apos;pos&apos;: [44.2601507, -76.5828076],
+  u&apos;type&apos;: u&apos;node&apos;},
+ {u&apos;_id&apos;: ObjectId(&apos;56ca38bdb1f1d1379ff37268&apos;),
+  u&apos;amenity&apos;: u&apos;restaurant&apos;,
+  u&apos;created&apos;: {u&apos;changeset&apos;: u&apos;34302698&apos;,
+               u&apos;timestamp&apos;: u&apos;2015-09-28T12:22:47Z&apos;,
+               u&apos;uid&apos;: u&apos;2935895&apos;,
+               u&apos;user&apos;: u&apos;CTexplorer&apos;,
+               u&apos;version&apos;: u&apos;1&apos;},
+  u&apos;id&apos;: u&apos;3762451973&apos;,
+  u&apos;pos&apos;: [44.0410375, -75.8998783],
+  u&apos;type&apos;: u&apos;node&apos;}]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Which raised another question, because after Googling those coordinates I got a restaurant called <a href="https://www.google.ca/maps/place/Riley's+by+the+River/@44.338247,-75.9194395,17z/data=!4m7!1m4!3m3!1s0x0:0x0!2zNDTCsDIwJzE3LjciTiA3NcKwNTUnMDIuMSJX!3b1!3m1!1s0x0000000000000000:0x41864813d9028f8f">Riley's by the River</a>, which is across the river in the United States.
+And it turns out that the area I exported was not the city limit of Kingston, but a <a href="https://www.openstreetmap.org/export#map=10/44.3459/-76.4731">still larger area of land</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In my initial audit I did not find any non Canadian postal codes. This seems strange now in light of the fact that I've been looking at a map that includes a portion, albeit a small one, of the United States of America. So, just how many postal codes are missing?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;address.housenumber&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="s2">&quot;address.postcode&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">}}}</span> <span class="c1"># if it has a housenumber but no postal code</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">m</span> <span class="p">]</span> <span class="c1"># make the without pipeline</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span> <span class="c1"># aggregate</span>
+<span class="n">without</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="c1"># count the number of matching documents</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;address.housenumber&quot;</span><span class="p">:{</span><span class="s2">&quot;$exists&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span> <span class="c1"># for context, how many housenumbered addresses are there</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">m</span> <span class="p">]</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">kingston_oapi</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipe</span><span class="p">)</span> <span class="c1"># aggregate</span>
+<span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="c1"># count the number of matching documents</span>
+
+<span class="k">print</span> <span class="s2">&quot;Out of {0} total housenumbers there are {1} without postalcodes. That is {2:.2f}%.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">without</span><span class="p">,</span> <span class="mf">100.</span> <span class="o">*</span> <span class="n">without</span><span class="o">/</span><span class="n">total</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Out of 26502 total housenumbers there are 25757 without postalcodes. That is 97.19%.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So this is an obvious area for improvement. I could imagine writing a scraping script in Python to check the Canada Post website in order to get this data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="4.-Conclusion">4. Conclusion<a class="anchor-link" href="#4.-Conclusion">&#182;</a></h3>
 </div>
 </div>
@@ -700,10 +997,11 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Openstreetmap data Kingston, Ontario seems to be reasonably clean.</p>
+<p>The Openstreetmap data for the area around Kingston, Ontario seems to be reasonably clean but it is missing almost all of its postal code information.</p>
 <h4 id="Ways-to-Improve-the-Data">Ways to Improve the Data<a class="anchor-link" href="#Ways-to-Improve-the-Data">&#182;</a></h4><ol>
-<li>As noted above, the most common type of cuisine is 'None'. This could be fixed by looking the restaurants up online and filling in the appropriate type.</li>
+<li>As noted above, the most common type of cuisine is 'None'. This could be fixed by looking the restaurants up online and filling in the appropriate type, which I've started to do.</li>
 <li>The cleaned street type information could be captured and submitted to the community.</li>
+<li>A script could be written to address the issue that nearly all of the housenumbered entries are missing postal code data. It could take the street number and name and query the Canadian Postal Website for the missing information.  I think that this could be done with reasonable accuracy, and withou much work, but I'm unsure of the legality of scraping such a site. It is also possible that erroneous data could be entered if the data was not audited carefully, but with so little data there at all to begin with, the risk seems reasonable. One benefit to this could be that political ridings in Canada are often related to postal codes. Having access to this information more easily would allow services to be made that make it easier for voters to find their polling stations. A draw back may be that more useless junkmail could be sent out targeted at individual households.</li>
 </ol>
 
 </div>
@@ -731,26 +1029,31 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
 
+<span class="sd">&quot;&quot;&quot;Debug flag to work with a much smaller map&quot;&quot;&quot;</span>
 <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
 
+<span class="sd">&quot;&quot;&quot;all these files are at the same directory level&quot;&quot;&quot;</span>
 <span class="n">OSM_FILE</span> <span class="o">=</span> <span class="s2">&quot;kingston_oapi.osm&quot;</span>
 <span class="n">TEST_FILE</span> <span class="o">=</span> <span class="s2">&quot;NDG.osm&quot;</span>
 <span class="n">SAMPLE_FILE</span> <span class="o">=</span> <span class="s2">&quot;sample.osm&quot;</span>
-<span class="n">CREATED</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="s2">&quot;changeset&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">]</span>
 
 <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
-    <span class="n">OSM_FILE</span> <span class="o">=</span> <span class="n">TEST_FILE</span>
+    <span class="sd">&quot;&quot;&quot;Loading large files only to find errors is very frustrating</span>
+<span class="sd">    So let&#39;s have a debug mode that opens a much smaller one.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">OSM_FILE</span> <span class="o">=</span> <span class="n">SAMPLE_FILE</span>
 
 <span class="k">def</span> <span class="nf">get_db</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Gets the &#39;examples&#39; database &quot;&quot;&quot;</span>
     <span class="n">client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">(</span><span class="s1">&#39;localhost:27017&#39;</span><span class="p">)</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">examples</span>
     <span class="k">return</span> <span class="n">db</span>
 
-<span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">()</span>
 
-<span class="c1"># From the sample code in the course work</span>
 <span class="k">def</span> <span class="nf">get_element</span><span class="p">(</span><span class="n">osm_file</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="s1">&#39;way&#39;</span><span class="p">,</span> <span class="s1">&#39;relation&#39;</span><span class="p">)):</span>
-    <span class="sd">&quot;&quot;&quot;Yield element if it is the right type of tag</span>
+    <span class="sd">&quot;&quot;&quot;This function is copied straight from the instructor code</span>
+<span class="sd">    </span>
+<span class="sd">    Yield element if it is the right type of tag</span>
 
 <span class="sd">    Reference:</span>
 <span class="sd">    http://stackoverflow.com/questions/3095434/inserting-newlines-in-xml-file-generated-via-xml-etree-elementtree-in-python</span>
@@ -761,28 +1064,37 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
         <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;end&#39;</span> <span class="ow">and</span> <span class="n">elem</span><span class="o">.</span><span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">elem</span>
             <span class="n">root</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-            
-<span class="k">def</span> <span class="nf">count_tags</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-        <span class="n">it</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
-            <span class="n">d</span><span class="p">[</span><span class="n">each</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">d</span>
 
-<span class="c1"># Sanity test to ensure code is working</span>
+<span class="k">def</span> <span class="nf">count_tags</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Counts the tags of each type in an OSM file</span>
+<span class="sd">    Serves as a first quick audit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">each</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">d</span>
+
+
 <span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Sanity test/first audit&quot;&quot;&quot;</span>
     <span class="n">tags</span> <span class="o">=</span> <span class="n">count_tags</span><span class="p">(</span><span class="n">OSM_FILE</span><span class="p">)</span>
     <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
     
-<span class="n">street_type_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;\b\S+\.?$&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span> <span class="c1"># get the last word in the string</span>
+<span class="sd">&quot;&quot;&quot;get the last word in the string&quot;&quot;&quot;</span>
+<span class="n">street_type_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;\b\S+\.?$&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span> 
 
-<span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Street&quot;</span><span class="p">,</span> <span class="s2">&quot;Avenue&quot;</span><span class="p">,</span> <span class="s2">&quot;Boulevard&quot;</span><span class="p">,</span> <span class="s2">&quot;Drive&quot;</span><span class="p">,</span> <span class="s2">&quot;Court&quot;</span><span class="p">,</span> <span class="s2">&quot;Place&quot;</span><span class="p">,</span> <span class="s2">&quot;Square&quot;</span><span class="p">,</span> <span class="s2">&quot;Lane&quot;</span><span class="p">,</span> <span class="s2">&quot;Road&quot;</span><span class="p">,</span> <span class="s2">&quot;Crossroad&quot;</span><span class="p">,</span>
+<span class="sd">&quot;&quot;&quot;standard canadian postal code form&quot;&quot;&quot;</span>
+<span class="n">postal_code_form</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] ?[0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]&#39;</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;This is the list of street names that appear in the Kingston OSM&quot;&quot;&quot;</span>
+<span class="n">EXPECTED</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Street&quot;</span><span class="p">,</span> <span class="s2">&quot;Avenue&quot;</span><span class="p">,</span> <span class="s2">&quot;Boulevard&quot;</span><span class="p">,</span> <span class="s2">&quot;Drive&quot;</span><span class="p">,</span> <span class="s2">&quot;Court&quot;</span><span class="p">,</span> <span class="s2">&quot;Place&quot;</span><span class="p">,</span> <span class="s2">&quot;Square&quot;</span><span class="p">,</span> <span class="s2">&quot;Lane&quot;</span><span class="p">,</span> <span class="s2">&quot;Road&quot;</span><span class="p">,</span> <span class="s2">&quot;Crossroad&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Trail&quot;</span><span class="p">,</span> <span class="s2">&quot;Parkway&quot;</span><span class="p">,</span> <span class="s2">&quot;Commons&quot;</span><span class="p">,</span> <span class="s2">&quot;Crescent&quot;</span><span class="p">,</span> <span class="s2">&quot;Circle&quot;</span><span class="p">,</span> <span class="s2">&quot;Way&quot;</span><span class="p">,</span> <span class="s2">&quot;Terrace&quot;</span><span class="p">,</span> <span class="s2">&quot;Causeway&quot;</span><span class="p">,</span> <span class="s2">&quot;Gate&quot;</span><span class="p">,</span> <span class="s2">&quot;Heights&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Highway&quot;</span><span class="p">,</span> <span class="s2">&quot;Grove&quot;</span><span class="p">,</span> <span class="s2">&quot;Park&quot;</span><span class="p">,</span> <span class="s2">&quot;Mews&quot;</span><span class="p">,</span> <span class="s2">&quot;Row&quot;</span><span class="p">,</span> <span class="s2">&quot;Sideroad&quot;</span><span class="p">,</span> <span class="s2">&quot;Line&quot;</span><span class="p">,</span> <span class="s2">&quot;Route&quot;</span><span class="p">,</span> <span class="s2">&quot;Shores&quot;</span><span class="p">,</span> <span class="s2">&quot;Point&quot;</span><span class="p">,</span> <span class="s2">&quot;Green&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;Heath&quot;</span><span class="p">,</span> <span class="s2">&quot;Close&quot;</span>
            <span class="p">]</span>
-
-<span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;St&quot;</span><span class="p">:</span> <span class="s2">&quot;Street&quot;</span><span class="p">,</span>
+<span class="sd">&quot;&quot;&quot;These are the abbreviations and non-standard instances of those names&quot;&quot;&quot;</span>
+<span class="n">MAPPING</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;St&quot;</span><span class="p">:</span> <span class="s2">&quot;Street&quot;</span><span class="p">,</span>
             <span class="s2">&quot;St.&quot;</span><span class="p">:</span> <span class="s2">&quot;Street&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Ave&quot;</span><span class="p">:</span> <span class="s2">&quot;Avenue&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Ave.&quot;</span><span class="p">:</span> <span class="s2">&quot;Avenue&quot;</span><span class="p">,</span>
@@ -795,140 +1107,187 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
             <span class="s2">&quot;RD&quot;</span><span class="p">:</span> <span class="s2">&quot;Road&quot;</span><span class="p">,</span>
             <span class="s2">&quot;CR&quot;</span><span class="p">:</span> <span class="s2">&quot;Road&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Height&quot;</span><span class="p">:</span> <span class="s2">&quot;Heights&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;SH&quot;</span><span class="p">:</span> <span class="s2">&quot;Highway&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Ferguson&quot;</span><span class="p">:</span> <span class="s2">&quot;Sideroad&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Rt&quot;</span><span class="p">:</span> <span class="s2">&quot;Route&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Odessa&quot;</span><span class="p">:</span> <span class="s2">&quot;Street&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Concession&quot;</span><span class="p">:</span> <span class="s2">&quot;Street&quot;</span><span class="p">,</span>
             <span class="s2">&quot;d&#39;Armes&quot;</span><span class="p">:</span> <span class="s2">&quot;Place&quot;</span><span class="p">,</span>
             <span class="s2">&quot;U.S.&quot;</span><span class="p">:</span> <span class="s2">&quot;Highway&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Hillcrest&quot;</span><span class="p">:</span> <span class="s2">&quot;Avenue&quot;</span>
             <span class="p">}</span>
 
+<span class="sd">&quot;&quot;&quot;tags with these names have &quot;&quot;&quot;</span>
+<span class="n">CREATED</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="s2">&quot;changeset&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">]</span>
+
+
 <span class="k">def</span> <span class="nf">clean_endings</span><span class="p">(</span><span class="n">street_name</span><span class="p">):</span>
-    <span class="n">words</span> <span class="o">=</span> <span class="n">street_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
-    
+    <span class="sd">&quot;&quot;&quot;Sometimes street names end with a cardinal direction</span>
+<span class="sd">    If they do, we strip them.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">street_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="c1"># list the words and if the last one is a direction, recurse</span>
     <span class="k">if</span> <span class="n">words</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;North&quot;</span><span class="p">,</span> <span class="s2">&quot;South&quot;</span><span class="p">,</span> <span class="s2">&quot;East&quot;</span><span class="p">,</span> <span class="s2">&quot;West&quot;</span><span class="p">,</span> <span class="s2">&quot;north&quot;</span><span class="p">,</span> <span class="s2">&quot;south&quot;</span><span class="p">,</span> <span class="s2">&quot;east&quot;</span><span class="p">,</span> <span class="s2">&quot;west&quot;</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">clean_endings</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
     
+    <span class="sd">&quot;&quot;&quot;Sometimes a street name ends with a number, like Highway 38.</span>
+<span class="sd">    If it does we want it removed&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="nb">int</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># if the last word can be converted to an int it should be stripped</span>
-        <span class="k">return</span> <span class="n">clean_endings</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="sd">&quot;&quot;&quot;if the last word can be converted to an int it should be stripped&quot;&quot;&quot;</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">words</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> 
+        <span class="k">return</span> <span class="n">clean_endings</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="c1"># recurse</span>
     <span class="k">except</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;if it can&#39;t be converted, carry on&quot;&quot;&quot;</span>
         <span class="k">pass</span>
     
     <span class="k">return</span> <span class="n">street_name</span>
         
     
 <span class="k">def</span> <span class="nf">audit_street_type</span><span class="p">(</span><span class="n">street_types</span><span class="p">,</span> <span class="n">street_name</span><span class="p">):</span>
-    <span class="n">temp_name</span> <span class="o">=</span> <span class="n">clean_endings</span><span class="p">(</span><span class="n">street_name</span><span class="p">)</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">street_type_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">temp_name</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Function to see unconventional street types&quot;&quot;&quot;</span>
+    <span class="n">temp_name</span> <span class="o">=</span> <span class="n">clean_endings</span><span class="p">(</span><span class="n">street_name</span><span class="p">)</span> <span class="c1"># removes unwanted last words</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">street_type_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">temp_name</span><span class="p">)</span> <span class="c1"># selects the last word in the address</span>
         
     <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
         <span class="n">street_type</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
-        <span class="n">keys</span> <span class="o">=</span> <span class="n">mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">MAPPING</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         
-        <span class="k">if</span> <span class="n">street_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">expected</span> <span class="ow">and</span> <span class="n">street_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;If this is a type we haven&#39;t seen, add it to the list so we can iteratively review it&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">street_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EXPECTED</span> <span class="ow">and</span> <span class="n">street_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
             <span class="n">street_types</span><span class="p">[</span><span class="n">street_type</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">street_name</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">pass</span>
-            <span class="n">street_type</span> <span class="o">=</span> <span class="n">update_name</span><span class="p">(</span><span class="n">street_type</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span>
             
         <span class="k">return</span> <span class="n">street_type</span>
+
+
+<span class="k">def</span> <span class="nf">audit_postal_code</span><span class="p">(</span><span class="n">bad_postal_codes</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Looking for malformed postal codes&quot;&quot;&quot;</span>
+    
+    <span class="sd">&quot;&quot;&quot;Use the regular expression to search the postal code&quot;&quot;&quot;</span>
+    <span class="n">good_code</span> <span class="o">=</span> <span class="n">postal_code_form</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">good_code</span><span class="p">:</span>
+        <span class="n">bad_postal_codes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     
 <span class="k">def</span> <span class="nf">is_street_name</span><span class="p">(</span><span class="n">elem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;return boolean, true if elem.attrib is addr:street&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;addr:street&quot;</span><span class="p">)</span>
 
+<span class="k">def</span> <span class="nf">is_postal_code</span><span class="p">(</span><span class="n">elem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;return boolean, true if elem.attrib is addr:postcode&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;addr:postcode&quot;</span><span class="p">)</span>
+
 <span class="k">def</span> <span class="nf">audit</span><span class="p">(</span><span class="n">osmfile</span><span class="p">):</span>
-    <span class="n">osm_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">osmfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
-    <span class="n">street_types</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Returns a dictionary of street names that are nonstandard and another dictionary</span>
+<span class="sd">    of malformed postal codes&quot;&quot;&quot;</span>
     
+    <span class="n">osm_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">osmfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="c1"># read the file</span>
+    <span class="n">street_types</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span> <span class="c1"># initialize the output variables</span>
+    <span class="n">bad_postal_codes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    
+    <span class="sd">&quot;&quot;&quot;Iterate through the elements of the OSM file&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">event</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">ET</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="n">osm_file</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,)):</span>
+        
+        <span class="sd">&quot;&quot;&quot;Ignore non node or way tags&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;node&quot;</span> <span class="ow">or</span> <span class="n">elem</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;way&quot;</span><span class="p">:</span>
+            
             <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">elem</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="s2">&quot;tag&quot;</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;If it&#39;s a street name or a postal code, investigate it&quot;&quot;&quot;</span>
                 <span class="k">if</span> <span class="n">is_street_name</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
                     <span class="n">audit_street_type</span><span class="p">(</span><span class="n">street_types</span><span class="p">,</span> <span class="n">tag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">is_postal_code</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+                    <span class="n">audit_postal_code</span><span class="p">(</span><span class="n">bad_postal_codes</span><span class="p">,</span> <span class="n">tag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">])</span>
 
-    <span class="k">return</span> <span class="n">street_types</span>
+    <span class="k">return</span> <span class="n">street_types</span><span class="p">,</span> <span class="n">bad_postal_codes</span>
 
 <span class="k">def</span> <span class="nf">update_name</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;fixes abbreviated street types&quot;&quot;&quot;</span>
+    
     <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;If the word is st. rd. ave. etc. then replace it with it&#39;s corresponding word&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">mapping</span><span class="p">[</span><span class="n">word</span><span class="p">],</span> <span class="n">name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">name</span>
 
-<span class="k">def</span> <span class="nf">get_user</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">iter</span><span class="p">():</span>
-        <span class="k">if</span> <span class="s1">&#39;user&#39;</span> <span class="ow">in</span> <span class="n">tag</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span>
-
-<span class="k">def</span> <span class="nf">get_all_users</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="n">users</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">ET</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-        <span class="n">user</span> <span class="o">=</span> <span class="n">get_user</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
-            <span class="n">users</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">users</span>
-
 <span class="k">def</span> <span class="nf">shape_element</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function takes an OSM element and creates a Document, in this case a Python Dict&quot;&quot;&quot;</span>
     <span class="n">node</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">node</span><span class="p">[</span><span class="s1">&#39;created&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     
-    <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;node&quot;</span> <span class="ow">or</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;way&quot;</span> <span class="p">:</span>
-        <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;node&quot;</span><span class="p">:</span>
-            <span class="n">node</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;node&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">node</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;way&#39;</span>
-            
-        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">iter</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;tag&#39;</span><span class="p">:</span>
-                <span class="n">k</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span>
-                <span class="n">k_terms</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
-                
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k_terms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">node</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-                    
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k_terms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">k_terms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;addr&#39;</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="s1">&#39;address&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
-                        <span class="n">node</span><span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-                    <span class="n">node</span><span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">][</span><span class="n">k_terms</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">v</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">CREATED</span><span class="p">:</span>
-                        <span class="n">node</span><span class="p">[</span><span class="s1">&#39;created&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-                    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;lat&#39;</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="s1">&#39;pos&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
-                            <span class="n">node</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">node</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="s1">&#39;pos&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
-                            <span class="n">node</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">node</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;ref&#39;</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="s1">&#39;node_refs&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
-                            <span class="n">node</span><span class="p">[</span><span class="s1">&#39;node_refs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-                        <span class="n">node</span><span class="p">[</span><span class="s1">&#39;node_refs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">node</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-        <span class="k">return</span> <span class="n">node</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;We are only interested in nodes and ways&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;node&quot;</span> <span class="ow">and</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;way&quot;</span> <span class="p">:</span>
         <span class="k">return</span> <span class="bp">None</span>
+    
+    <span class="sd">&quot;&quot;&quot;We know the element tag is a node or a way and so we set it as such&quot;&quot;&quot;</span>
+    <span class="n">node</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">tag</span>
+
+    <span class="sd">&quot;&quot;&quot;Loop through the attributes of each element&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">iter</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;for each of the tags&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s1">&#39;tag&#39;</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span>
+            <span class="n">k_terms</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+
+            <span class="sd">&quot;&quot;&quot;Case of one to one mapping&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k_terms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">node</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+            <span class="sd">&quot;&quot;&quot;Address tags need street type cleaning&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k_terms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">k_terms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;addr&#39;</span><span class="p">:</span>
+                
+                <span class="sd">&quot;&quot;&quot;Address is a subdocument&quot;&quot;&quot;</span>
+                <span class="k">if</span> <span class="s1">&#39;address&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
+                    <span class="n">node</span><span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                    
+                <span class="sd">&quot;&quot;&quot;if this tag is a street, then let&#39;s clean it&quot;&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">k_terms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;street&quot;</span><span class="p">:</span> 
+                    <span class="n">node</span><span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">][</span><span class="n">k_terms</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">update_name</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">MAPPING</span><span class="p">)</span>
+                    
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="sd">&quot;&quot;&quot;Otherwise, leave the tag alone&quot;&quot;&quot;</span>
+                    <span class="n">node</span><span class="p">[</span><span class="s1">&#39;address&#39;</span><span class="p">][</span><span class="n">k_terms</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">v</span>
+                
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">CREATED</span><span class="p">:</span> <span class="c1"># tag belongs in the created subdocument</span>
+                    <span class="n">node</span><span class="p">[</span><span class="s1">&#39;created&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                    
+                <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="c1"># position subdocument makes a pair of lat and long</span>
+                    <span class="k">if</span> <span class="s1">&#39;pos&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
+                        <span class="n">node</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">node</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    
+                <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s1">&#39;pos&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
+                        <span class="n">node</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">node</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    
+                <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;ref&#39;</span><span class="p">:</span> <span class="c1"># refs subdocument collects the nodes this tag references</span>
+                    <span class="k">if</span> <span class="s1">&#39;node_refs&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
+                        <span class="n">node</span><span class="p">[</span><span class="s1">&#39;node_refs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">node</span><span class="p">[</span><span class="s1">&#39;node_refs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">node</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">node</span>
 
 <span class="k">def</span> <span class="nf">create_sample_osm</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Method copied from the instructor notes.</span>
+<span class="sd">    Had to change the method to write every 20th element</span>
+<span class="sd">    to conform to size requirements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">SAMPLE_FILE</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
         <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;osm&gt;</span><span class="se">\n</span><span class="s1">  &#39;</span><span class="p">)</span>
 
-        <span class="c1"># Write every 20th top level element</span>
+        <span class="sd">&quot;&quot;&quot;Write every 20th top level element&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">get_element</span><span class="p">(</span><span class="n">OSM_FILE</span><span class="p">)):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
         <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;/osm&gt;&#39;</span><span class="p">)</span>
     
 <span class="k">def</span> <span class="nf">process_map</span><span class="p">(</span><span class="n">file_in</span><span class="p">,</span> <span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;After the auditing is done, commit the shappings to a json file&quot;&quot;&quot;</span>
+    
+    <span class="sd">&quot;&quot;&quot;Create a sample file&quot;&quot;&quot;</span>
     <span class="n">create_sample_osm</span><span class="p">()</span>
     
+    <span class="sd">&quot;&quot;&quot;Write the reshaped elements to a json file&quot;&quot;&quot;</span>
     <span class="n">file_out</span> <span class="o">=</span> <span class="s2">&quot;{0}.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_in</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_out</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">ET</span><span class="o">.</span><span class="n">iterparse</span><span class="p">(</span><span class="n">file_in</span><span class="p">):</span>
@@ -938,7 +1297,6 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
                     <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                    
 </pre></div>
 
 </div>
@@ -949,6 +1307,36 @@ kingston-oapi.osm.json ... 178.5.4MB</code></p>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">street_types</span><span class="p">,</span> <span class="n">bad_postal_codes</span> <span class="o">=</span> <span class="n">audit</span><span class="p">(</span><span class="n">OSM_FILE</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">street_types</span>
+<span class="k">print</span> <span class="n">bad_postal_codes</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>defaultdict(&lt;type &apos;set&apos;&gt;, {&apos;Concession&apos;: set([&apos;Concession 2&apos;]), &apos;SH&apos;: set([&apos;SH 37&apos;]), &apos;Hillcrest&apos;: set([&apos;Hillcrest&apos;]), &apos;Ferguson&apos;: set([&apos;Sideroad Ferguson&apos;]), &apos;Odessa&apos;: set([&apos;Main Street Odessa&apos;])})
+set([&apos;13624&apos;, &apos;13601&apos;, &apos;K7L 1D7&apos;, &apos;K7I3B4&apos;])
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">process_map</span><span class="p">(</span><span class="n">OSM_FILE</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
